@@ -7,15 +7,23 @@ namespace Toqe.Downloader.Business.Observer
 {
     public class DownloadProgressMonitor : AbstractDownloadObserver
     {
+        #region Field
+
         private readonly Dictionary<IDownload, long> downloadSizes = new Dictionary<IDownload, long>();
 
         private readonly Dictionary<IDownload, long> alreadyDownloadedSizes = new Dictionary<IDownload, long>();
+
+        #endregion
+
+        #region Public Method
 
         public float GetCurrentProgressPercentage(IDownload download)
         {
             lock (this.monitor)
             {
-                if (!this.downloadSizes.ContainsKey(download) || !this.alreadyDownloadedSizes.ContainsKey(download) || this.downloadSizes[download] <= 0)
+                if (!this.downloadSizes.ContainsKey(download) || 
+                    !this.alreadyDownloadedSizes.ContainsKey(download) || 
+                    this.downloadSizes[download] <= 0)
                 {
                     return 0;
                 }
@@ -50,6 +58,10 @@ namespace Toqe.Downloader.Business.Observer
             }
         }
 
+        #endregion
+
+        #region Protected Method
+
         protected override void OnAttach(IDownload download)
         {
             download.DownloadStarted += this.OnDownloadStarted;
@@ -76,6 +88,10 @@ namespace Toqe.Downloader.Business.Observer
                 }
             }
         }
+
+        #endregion
+
+        #region Event Handler
 
         private void OnDownloadStarted(DownloadStartedEventArgs args)
         {
@@ -106,5 +122,7 @@ namespace Toqe.Downloader.Business.Observer
                 this.alreadyDownloadedSizes[args.Download] = this.downloadSizes[args.Download];
             }
         }
+
+        #endregion
     }
 }

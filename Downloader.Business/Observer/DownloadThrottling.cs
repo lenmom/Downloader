@@ -10,6 +10,8 @@ namespace Toqe.Downloader.Business.Observer
 {
     public class DownloadThrottling : IDownloadObserver, IDisposable
     {
+        #region Field
+
         private readonly int maxBytesPerSecond;
 
         private readonly List<IDownload> downloads = new List<IDownload>();
@@ -21,6 +23,10 @@ namespace Toqe.Downloader.Business.Observer
         private double floatingWaitingTimeInMilliseconds = 0;
 
         private object monitor = new object();
+
+        #endregion
+
+        #region Constructor
 
         public DownloadThrottling(int maxBytesPerSecond, int maxSampleCount)
         {
@@ -38,6 +44,10 @@ namespace Toqe.Downloader.Business.Observer
             this.maxSampleCount = maxSampleCount;
             this.samples = new List<DownloadDataSample>();
         }
+
+        #endregion
+
+        #region Public Method
 
         public void Attach(IDownload download)
         {
@@ -84,6 +94,10 @@ namespace Toqe.Downloader.Business.Observer
         {
             this.DetachAll();
         }
+
+        #endregion
+
+        #region Private Method
 
         private void AddSample(int count)
         {
@@ -135,6 +149,10 @@ namespace Toqe.Downloader.Business.Observer
             }
         }
 
+        #endregion
+
+        #region Event Handler
+
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
             this.AddSample(args.Count);
@@ -145,5 +163,7 @@ namespace Toqe.Downloader.Business.Observer
                 Thread.Sleep(waitingTime);
             }
         }
+
+        #endregion
     }
 }

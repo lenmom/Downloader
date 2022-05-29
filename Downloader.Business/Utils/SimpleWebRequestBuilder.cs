@@ -8,6 +8,17 @@ namespace Toqe.Downloader.Business.Utils
 {
     public class SimpleWebRequestBuilder : IWebRequestBuilder
     {
+        #region Property
+
+        public IWebProxy proxy
+        {
+            get; private set;
+        }
+
+        #endregion
+
+        #region Constructor
+
         public SimpleWebRequestBuilder(IWebProxy proxy)
         {
             this.proxy = proxy;
@@ -18,10 +29,9 @@ namespace Toqe.Downloader.Business.Utils
         {
         }
 
-        public IWebProxy proxy
-        {
-            get; private set;
-        }
+        #endregion
+
+        #region Public Method
 
         public HttpWebRequest CreateRequest(Uri url, long? offset)
         {
@@ -43,6 +53,10 @@ namespace Toqe.Downloader.Business.Utils
             return request;
         }
 
+        #endregion
+
+        #region Private Method
+
         private void AddLongRangeInDotNet3_5(HttpWebRequest request, long offset)
         {
             MethodInfo method = typeof(WebHeaderCollection).GetMethod("AddWithoutValidate", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -52,5 +66,7 @@ namespace Toqe.Downloader.Business.Utils
 
             method.Invoke(request.Headers, new object[] { key, val });
         }
+
+        #endregion
     }
 }

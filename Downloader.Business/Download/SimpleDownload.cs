@@ -9,10 +9,21 @@ namespace Toqe.Downloader.Business.Download
 {
     public class SimpleDownload : AbstractDownload
     {
-        public SimpleDownload(Uri url, int bufferSize, long? offset, long? maxReadBytes, IWebRequestBuilder requestBuilder, IDownloadChecker downloadChecker)
+        #region Constructor
+
+        public SimpleDownload(Uri url,
+                              int bufferSize,
+                              long? offset,
+                              long? maxReadBytes,
+                              IWebRequestBuilder requestBuilder,
+                              IDownloadChecker downloadChecker)
             : base(url, bufferSize, offset, maxReadBytes, requestBuilder, downloadChecker)
         {
         }
+
+        #endregion
+
+        #region Protected Method
 
         protected override void OnStart()
         {
@@ -110,5 +121,7 @@ namespace Toqe.Downloader.Business.Download
                 this.OnDownloadCancelled(new DownloadCancelledEventArgs(this, ex));
             }
         }
+
+        #endregion
     }
 }

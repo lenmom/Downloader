@@ -10,6 +10,8 @@ namespace Toqe.Downloader.Business.Download
 {
     public class ResumingDownload : AbstractDownload
     {
+        #region Field
+
         private readonly int timeForHeartbeat;
 
         private readonly int timeToRetry;
@@ -30,7 +32,18 @@ namespace Toqe.Downloader.Business.Download
 
         private int currentRetry = 0;
 
-        public ResumingDownload(Uri url, int bufferSize, long? offset, long? maxReadBytes, int timeForHeartbeat, int timeToRetry, int? maxRetries, IDownloadBuilder downloadBuilder)
+        #endregion
+
+        #region Constructor
+
+        public ResumingDownload(Uri url, 
+                                int bufferSize, 
+                                long? offset, 
+                                long? maxReadBytes, 
+                                int timeForHeartbeat, 
+                                int timeToRetry, 
+                                int? maxRetries, 
+                                IDownloadBuilder downloadBuilder)
             : base(url, bufferSize, offset, maxReadBytes, null, null)
         {
             if (timeForHeartbeat <= 0)
@@ -54,6 +67,10 @@ namespace Toqe.Downloader.Business.Download
             this.downloadBuilder = downloadBuilder;
         }
 
+        #endregion
+
+        #region Protected Method
+
         protected override void OnStart()
         {
             this.StartThread(this.StartDownload, string.Format("ResumingDownload offset {0} length {1} Main", this.offset, this.maxReadBytes));
@@ -68,6 +85,10 @@ namespace Toqe.Downloader.Business.Download
                 this.DoStopIfNecessary();
             }
         }
+
+        #endregion
+
+        #region Private Method
 
         private void StartDownload()
         {
@@ -173,6 +194,10 @@ namespace Toqe.Downloader.Business.Download
             }
         }
 
+        #endregion
+
+        #region Event Handler
+
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
             IDownload download = args.Download;
@@ -253,5 +278,7 @@ namespace Toqe.Downloader.Business.Download
                 }
             }
         }
+
+        #endregion
     }
 }

@@ -9,9 +9,15 @@ namespace Toqe.Downloader.Business.Observer
 {
     public class DownloadSpeedMonitor : AbstractDownloadObserver
     {
+        #region Field
+
         private readonly int maxSampleCount;
 
         private readonly List<DownloadDataSample> samples = new List<DownloadDataSample>();
+
+        #endregion
+
+        #region Constructor
 
         public DownloadSpeedMonitor(int maxSampleCount)
         {
@@ -22,6 +28,10 @@ namespace Toqe.Downloader.Business.Observer
 
             this.maxSampleCount = maxSampleCount;
         }
+
+        #endregion
+
+        #region Public Method
 
         public int GetCurrentBytesPerSecond()
         {
@@ -39,6 +49,10 @@ namespace Toqe.Downloader.Business.Observer
             }
         }
 
+        #endregion
+
+        #region Protected Method
+
         protected override void OnAttach(IDownload download)
         {
             download.DataReceived += this.downloadDataReceived;
@@ -48,6 +62,10 @@ namespace Toqe.Downloader.Business.Observer
         {
             download.DataReceived -= this.downloadDataReceived;
         }
+
+        #endregion
+
+        #region Private Method
 
         private void AddSample(int count)
         {
@@ -68,9 +86,15 @@ namespace Toqe.Downloader.Business.Observer
             }
         }
 
+        #endregion
+
+        #region Event Handler
+
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
             this.AddSample(args.Count);
         }
+
+        #endregion
     }
 }

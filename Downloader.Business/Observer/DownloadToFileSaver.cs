@@ -8,9 +8,15 @@ namespace Toqe.Downloader.Business.Observer
 {
     public class DownloadToFileSaver : AbstractDownloadObserver
     {
+        #region Field
+
         private FileInfo file;
 
         private FileStream fileStream;
+
+        #endregion
+
+        #region Constructor
 
         public DownloadToFileSaver(string filename)
         {
@@ -32,6 +38,24 @@ namespace Toqe.Downloader.Business.Observer
             this.file = file;
         }
 
+        #endregion
+
+        #region Public Method
+
+        public override void Dispose()
+        {
+            lock (this.monitor)
+            {
+                this.CloseFile();
+            }
+
+            base.Dispose();
+        }
+
+        #endregion
+
+        #region Protected Method
+
         protected override void OnAttach(IDownload download)
         {
             download.DownloadStarted += this.downloadStarted;
@@ -49,6 +73,10 @@ namespace Toqe.Downloader.Business.Observer
             download.DownloadStopped -= this.downloadStopped;
             download.DataReceived -= this.downloadDataReceived;
         }
+
+        #endregion
+
+        #region Private Method
 
         private void OpenFileIfNecessary()
         {
@@ -85,6 +113,10 @@ namespace Toqe.Downloader.Business.Observer
                 }
             }
         }
+
+        #endregion
+
+        #region Evvent Handler
 
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
@@ -126,14 +158,6 @@ namespace Toqe.Downloader.Business.Observer
             }
         }
 
-        public override void Dispose()
-        {
-            lock (this.monitor)
-            {
-                this.CloseFile();
-            }
-
-            base.Dispose();
-        }
+        #endregion
     }
 }

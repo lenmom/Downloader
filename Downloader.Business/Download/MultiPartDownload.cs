@@ -12,6 +12,8 @@ namespace Toqe.Downloader.Business.Download
 {
     public class MultiPartDownload : AbstractDownload
     {
+        #region Field
+
         private readonly DownloadRangeHelper downloadRangeHelper = new DownloadRangeHelper();
 
         private readonly int numberOfParts;
@@ -20,15 +22,32 @@ namespace Toqe.Downloader.Business.Download
 
         private readonly Dictionary<IDownload, DownloadRange> downloads = new Dictionary<IDownload, DownloadRange>();
 
-        public MultiPartDownload(
-            Uri url,
-            int bufferSize,
-            int numberOfParts,
-            IDownloadBuilder downloadBuilder,
-            IWebRequestBuilder requestBuilder,
-            IDownloadChecker downloadChecker,
-            List<DownloadRange> alreadyDownloadedRanges)
-            : base(url, bufferSize, null, null, requestBuilder, downloadChecker)
+        #endregion
+
+        #region Property
+
+        public List<DownloadRange> AlreadyDownloadedRanges
+        {
+            get; private set;
+        }
+
+        public List<DownloadRange> ToDoRanges
+        {
+            get; private set;
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public MultiPartDownload(Uri url,
+                                  int bufferSize,
+                                  int numberOfParts,
+                                  IDownloadBuilder downloadBuilder,
+                                  IWebRequestBuilder requestBuilder,
+                                  IDownloadChecker downloadChecker,
+                                  List<DownloadRange> alreadyDownloadedRanges)
+           : base(url, bufferSize, null, null, requestBuilder, downloadChecker)
         {
             if (numberOfParts <= 0)
             {
@@ -50,15 +69,9 @@ namespace Toqe.Downloader.Business.Download
             }
         }
 
-        public List<DownloadRange> AlreadyDownloadedRanges
-        {
-            get; private set;
-        }
+        #endregion
 
-        public List<DownloadRange> ToDoRanges
-        {
-            get; private set;
-        }
+        #region Override Method
 
         protected override void OnStart()
         {
@@ -89,6 +102,10 @@ namespace Toqe.Downloader.Business.Download
                 this.state = DownloadState.Stopped;
             }
         }
+
+        #endregion
+
+        #region Private Method
 
         private DownloadCheckResult PerformInitialDownloadCheck()
         {
@@ -208,6 +225,10 @@ namespace Toqe.Downloader.Business.Download
             }
         }
 
+        #endregion
+
+        #region Event Handler
+
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
             long offset = args.Offset;
@@ -264,5 +285,7 @@ namespace Toqe.Downloader.Business.Download
         {
             this.StartDownloadOfNextRange();
         }
+
+        #endregion
     }
 }

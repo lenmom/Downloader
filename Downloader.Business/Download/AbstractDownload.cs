@@ -9,17 +9,11 @@ namespace Toqe.Downloader.Business.Download
 {
     public abstract class AbstractDownload : IDownload
     {
-        public event DownloadDelegates.DownloadDataReceivedHandler DataReceived;
+        #region Field
 
-        public event DownloadDelegates.DownloadStartedHandler DownloadStarted;
-
-        public event DownloadDelegates.DownloadCompletedHandler DownloadCompleted;
-
-        public event DownloadDelegates.DownloadStoppedHandler DownloadStopped;
-
-        public event DownloadDelegates.DownloadCancelledHandler DownloadCancelled;
-
+#pragma warning disable CS3005 // Identifier differing only in case is not CLS-compliant
         protected DownloadState state = DownloadState.Undefined;
+#pragma warning restore CS3005 // Identifier differing only in case is not CLS-compliant
 
         protected Uri url;
 
@@ -37,7 +31,44 @@ namespace Toqe.Downloader.Business.Download
 
         protected readonly object monitor = new object();
 
-        public AbstractDownload(Uri url, int bufferSize, long? offset, long? maxReadBytes, IWebRequestBuilder requestBuilder, IDownloadChecker downloadChecker)
+        #endregion
+
+        #region Event 
+
+        public event DownloadDelegates.DownloadDataReceivedHandler DataReceived;
+
+        public event DownloadDelegates.DownloadStartedHandler DownloadStarted;
+
+        public event DownloadDelegates.DownloadCompletedHandler DownloadCompleted;
+
+        public event DownloadDelegates.DownloadStoppedHandler DownloadStopped;
+
+        public event DownloadDelegates.DownloadCancelledHandler DownloadCancelled;
+
+        #endregion
+
+        #region Property
+
+#pragma warning disable CS3005 // Identifier differing only in case is not CLS-compliant
+        public DownloadState State
+#pragma warning restore CS3005 // Identifier differing only in case is not CLS-compliant
+        {
+            get
+            {
+                return this.state;
+            }
+        }
+
+        #endregion
+
+        #region Constructor
+
+        public AbstractDownload(Uri url,
+                                int bufferSize,
+                                long? offset,
+                                long? maxReadBytes,
+                                IWebRequestBuilder requestBuilder,
+                                IDownloadChecker downloadChecker)
         {
             if (url == null)
             {
@@ -69,13 +100,9 @@ namespace Toqe.Downloader.Business.Download
             this.state = DownloadState.Initialized;
         }
 
-        public DownloadState State
-        {
-            get
-            {
-                return this.state;
-            }
-        }
+        #endregion
+
+        #region Public Method
 
         public virtual void Start()
         {
@@ -95,21 +122,6 @@ namespace Toqe.Downloader.Business.Download
         public virtual void Stop()
         {
             this.DoStop(DownloadStopType.WithNotification);
-        }
-
-        protected virtual void DoStop(DownloadStopType stopType)
-        {
-            lock (this.monitor)
-            {
-                this.stopping = true;
-            }
-
-            this.OnStop();
-
-            if (stopType == DownloadStopType.WithNotification)
-            {
-                this.OnDownloadStopped(new DownloadEventArgs(this));
-            }
         }
 
         public virtual void Dispose()
@@ -160,6 +172,25 @@ namespace Toqe.Downloader.Business.Download
             }
         }
 
+        #endregion
+
+        #region Protected Method
+
+        protected virtual void DoStop(DownloadStopType stopType)
+        {
+            lock (this.monitor)
+            {
+                this.stopping = true;
+            }
+
+            this.OnStop();
+
+            if (stopType == DownloadStopType.WithNotification)
+            {
+                this.OnDownloadStopped(new DownloadEventArgs(this));
+            }
+        }
+
         protected virtual void OnStart()
         {
             // Implementations should start their work here.
@@ -171,6 +202,10 @@ namespace Toqe.Downloader.Business.Download
             // Implementations should clean up and free their ressources here.
             // The stop event must not be triggered in here, it is triggered in the context of the Stop method.
         }
+
+        #endregion
+
+        #region Event Handler
 
         protected virtual void StartThread(DownloadDelegates.VoidAction func, string name)
         {
@@ -217,5 +252,7 @@ namespace Toqe.Downloader.Business.Download
                 this.DownloadCancelled(args);
             }
         }
+
+        #endregion
     }
 }

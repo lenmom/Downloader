@@ -8,6 +8,8 @@ namespace Toqe.Downloader.Business.DownloadBuilder
 {
     public class MultiPartDownloadBuilder : IDownloadBuilder
     {
+        #region Field
+
         private readonly int numberOfParts;
 
         private readonly IDownloadBuilder downloadBuilder;
@@ -17,6 +19,10 @@ namespace Toqe.Downloader.Business.DownloadBuilder
         private readonly IDownloadChecker downloadChecker;
 
         private readonly List<DownloadRange> alreadyDownloadedRanges;
+
+        #endregion
+
+        #region Constructor
 
         public MultiPartDownloadBuilder(
             int numberOfParts,
@@ -52,9 +58,16 @@ namespace Toqe.Downloader.Business.DownloadBuilder
             this.alreadyDownloadedRanges = alreadyDownloadedRanges ?? new List<DownloadRange>();
         }
 
+        #endregion
+
+        #region Public Method
+
         public IDownload Build(Uri url, int bufferSize, long? offset, long? maxReadBytes)
         {
-            return new MultiPartDownload(url, bufferSize, this.numberOfParts, this.downloadBuilder, this.requestBuilder, this.downloadChecker, this.alreadyDownloadedRanges);
+            return new MultiPartDownload(url, bufferSize, this.numberOfParts, this.downloadBuilder, 
+                                         this.requestBuilder, this.downloadChecker, this.alreadyDownloadedRanges);
         }
+
+        #endregion
     }
 }

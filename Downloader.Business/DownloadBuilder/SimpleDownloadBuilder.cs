@@ -7,9 +7,15 @@ namespace Toqe.Downloader.Business.DownloadBuilder
 {
     public class SimpleDownloadBuilder : IDownloadBuilder
     {
+        #region Field
+
         private readonly IWebRequestBuilder requestBuilder;
 
         private readonly IDownloadChecker downloadChecker;
+
+        #endregion
+
+        #region Constructor
 
         public SimpleDownloadBuilder(IWebRequestBuilder requestBuilder, IDownloadChecker downloadChecker)
         {
@@ -27,9 +33,15 @@ namespace Toqe.Downloader.Business.DownloadBuilder
             this.downloadChecker = downloadChecker;
         }
 
+        #endregion
+
+        #region Public Method
+
         public IDownload Build(Uri url, int bufferSize, long? offset, long? maxReadBytes)
         {
             return new SimpleDownload(url, bufferSize, offset, maxReadBytes, this.requestBuilder, this.downloadChecker);
         }
+
+        #endregion
     }
 }
