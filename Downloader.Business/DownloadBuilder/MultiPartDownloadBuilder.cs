@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Download;
 
@@ -27,16 +26,24 @@ namespace Toqe.Downloader.Business.DownloadBuilder
             List<DownloadRange> alreadyDownloadedRanges)
         {
             if (numberOfParts <= 0)
+            {
                 throw new ArgumentException("numberOfParts <= 0");
+            }
 
             if (downloadBuilder == null)
+            {
                 throw new ArgumentNullException("downloadBuilder");
+            }
 
             if (requestBuilder == null)
+            {
                 throw new ArgumentNullException("requestBuilder");
+            }
 
             if (downloadChecker == null)
+            {
                 throw new ArgumentNullException("downloadChecker");
+            }
 
             this.numberOfParts = numberOfParts;
             this.downloadBuilder = downloadBuilder;

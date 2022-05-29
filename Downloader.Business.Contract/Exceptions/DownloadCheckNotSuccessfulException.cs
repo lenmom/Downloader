@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Toqe.Downloader.Business.Contract.Exceptions
 {
@@ -12,6 +9,9 @@ namespace Toqe.Downloader.Business.Contract.Exceptions
             this.DownloadCheckResult = downloadCheckResult;
         }
 
-        public DownloadCheckResult DownloadCheckResult { get; private set; }
+        public DownloadCheckResult DownloadCheckResult
+        {
+            get; private set;
+        }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 
 namespace Toqe.Downloader.Business.Utils
@@ -20,15 +18,18 @@ namespace Toqe.Downloader.Business.Utils
         {
         }
 
-        public IWebProxy proxy { get; private set; }
+        public IWebProxy proxy
+        {
+            get; private set;
+        }
 
         public HttpWebRequest CreateRequest(Uri url, long? offset)
         {
-            var request = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-            if (proxy != null)
+            if (this.proxy != null)
             {
-                request.Proxy = proxy;
+                request.Proxy = this.proxy;
             }
 
             if (offset.HasValue && offset.Value > 0)
@@ -44,7 +45,7 @@ namespace Toqe.Downloader.Business.Utils
 
         private void AddLongRangeInDotNet3_5(HttpWebRequest request, long offset)
         {
-            var method = typeof(WebHeaderCollection).GetMethod("AddWithoutValidate", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo method = typeof(WebHeaderCollection).GetMethod("AddWithoutValidate", BindingFlags.Instance | BindingFlags.NonPublic);
 
             string key = "Range";
             string val = string.Format("bytes={0}-", offset);

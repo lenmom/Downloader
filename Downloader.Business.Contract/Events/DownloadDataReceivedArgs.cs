@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Toqe.Downloader.Business.Contract.Events
+﻿namespace Toqe.Downloader.Business.Contract.Events
 {
     public class DownloadDataReceivedEventArgs : DownloadEventArgs
     {
@@ -19,10 +14,19 @@ namespace Toqe.Downloader.Business.Contract.Events
             this.Count = count;
         }
 
-        public byte[] Data { get; set; }
+        public byte[] Data
+        {
+            get; set;
+        }
 
-        public long Offset { get; set; }
+        public long Offset
+        {
+            get; set;
+        }
 
-        public int Count { get; set; }
+        public int Count
+        {
+            get; set;
+        }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using System.Threading;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Contract.Enums;
 using Toqe.Downloader.Business.Contract.Events;
@@ -42,16 +40,24 @@ namespace Toqe.Downloader.Business.Download
         public AbstractDownload(Uri url, int bufferSize, long? offset, long? maxReadBytes, IWebRequestBuilder requestBuilder, IDownloadChecker downloadChecker)
         {
             if (url == null)
+            {
                 throw new ArgumentNullException("url");
+            }
 
             if (bufferSize < 0)
+            {
                 throw new ArgumentException("bufferSize < 0");
+            }
 
             if (offset.HasValue && offset.Value < 0)
+            {
                 throw new ArgumentException("offset < 0");
+            }
 
             if (maxReadBytes.HasValue && maxReadBytes.Value < 0)
+            {
                 throw new ArgumentException("maxReadBytes < 0");
+            }
 
             this.url = url;
             this.bufferSize = bufferSize;
@@ -65,7 +71,10 @@ namespace Toqe.Downloader.Business.Download
 
         public DownloadState State
         {
-            get { return this.state; }
+            get
+            {
+                return this.state;
+            }
         }
 
         public virtual void Start()
@@ -112,7 +121,7 @@ namespace Toqe.Downloader.Business.Download
         {
             if (this.DataReceived != null)
             {
-                foreach (var i in this.DataReceived.GetInvocationList())
+                foreach (Delegate i in this.DataReceived.GetInvocationList())
                 {
                     this.DataReceived -= (DownloadDelegates.DownloadDataReceivedHandler)i;
                 }
@@ -120,7 +129,7 @@ namespace Toqe.Downloader.Business.Download
 
             if (this.DownloadCancelled != null)
             {
-                foreach (var i in this.DownloadCancelled.GetInvocationList())
+                foreach (Delegate i in this.DownloadCancelled.GetInvocationList())
                 {
                     this.DownloadCancelled -= (DownloadDelegates.DownloadCancelledHandler)i;
                 }
@@ -128,7 +137,7 @@ namespace Toqe.Downloader.Business.Download
 
             if (this.DownloadCompleted != null)
             {
-                foreach (var i in this.DownloadCompleted.GetInvocationList())
+                foreach (Delegate i in this.DownloadCompleted.GetInvocationList())
                 {
                     this.DownloadCompleted -= (DownloadDelegates.DownloadCompletedHandler)i;
                 }
@@ -136,7 +145,7 @@ namespace Toqe.Downloader.Business.Download
 
             if (this.DownloadStopped != null)
             {
-                foreach (var i in this.DownloadStopped.GetInvocationList())
+                foreach (Delegate i in this.DownloadStopped.GetInvocationList())
                 {
                     this.DownloadStopped -= (DownloadDelegates.DownloadStoppedHandler)i;
                 }
@@ -144,7 +153,7 @@ namespace Toqe.Downloader.Business.Download
 
             if (this.DownloadStarted != null)
             {
-                foreach (var i in this.DownloadStarted.GetInvocationList())
+                foreach (Delegate i in this.DownloadStarted.GetInvocationList())
                 {
                     this.DownloadStarted -= (DownloadDelegates.DownloadStartedHandler)i;
                 }
@@ -165,7 +174,7 @@ namespace Toqe.Downloader.Business.Download
 
         protected virtual void StartThread(DownloadDelegates.VoidAction func, string name)
         {
-            var thread = new Thread(new ThreadStart(func)) { Name = name };
+            Thread thread = new Thread(new ThreadStart(func)) { Name = name };
             thread.Start();
         }
 

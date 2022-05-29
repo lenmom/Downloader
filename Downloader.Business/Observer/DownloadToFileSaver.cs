@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Contract.Events;
@@ -18,7 +15,9 @@ namespace Toqe.Downloader.Business.Observer
         public DownloadToFileSaver(string filename)
         {
             if (string.IsNullOrEmpty(filename))
+            {
                 throw new ArgumentException("filename");
+            }
 
             this.file = new FileInfo(filename);
         }
@@ -26,27 +25,29 @@ namespace Toqe.Downloader.Business.Observer
         public DownloadToFileSaver(FileInfo file)
         {
             if (file == null)
+            {
                 throw new ArgumentNullException("file");
+            }
 
             this.file = file;
         }
 
         protected override void OnAttach(IDownload download)
         {
-            download.DownloadStarted += downloadStarted;
-            download.DownloadCancelled += downloadCancelled;
-            download.DownloadCompleted += downloadCompleted;
-            download.DownloadStopped += downloadStopped;
-            download.DataReceived += downloadDataReceived;
+            download.DownloadStarted += this.downloadStarted;
+            download.DownloadCancelled += this.downloadCancelled;
+            download.DownloadCompleted += this.downloadCompleted;
+            download.DownloadStopped += this.downloadStopped;
+            download.DataReceived += this.downloadDataReceived;
         }
 
         protected override void OnDetach(IDownload download)
         {
-            download.DownloadStarted -= downloadStarted;
-            download.DownloadCancelled -= downloadCancelled;
-            download.DownloadCompleted -= downloadCompleted;
-            download.DownloadStopped -= downloadStopped;
-            download.DataReceived -= downloadDataReceived;
+            download.DownloadStarted -= this.downloadStarted;
+            download.DownloadCancelled -= this.downloadCancelled;
+            download.DownloadCompleted -= this.downloadCompleted;
+            download.DownloadStopped -= this.downloadStopped;
+            download.DataReceived -= this.downloadDataReceived;
         }
 
         private void OpenFileIfNecessary()

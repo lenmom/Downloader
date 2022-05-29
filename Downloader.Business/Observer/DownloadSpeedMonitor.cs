@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Contract.Events;
 
@@ -16,7 +16,9 @@ namespace Toqe.Downloader.Business.Observer
         public DownloadSpeedMonitor(int maxSampleCount)
         {
             if (maxSampleCount < 2)
+            {
                 throw new ArgumentException("maxSampleCount < 2");
+            }
 
             this.maxSampleCount = maxSampleCount;
         }
@@ -30,8 +32,8 @@ namespace Toqe.Downloader.Business.Observer
                     return 0;
                 }
 
-                var sumOfBytesFromCalls = this.samples.Sum(s => s.Count);
-                var ticksBetweenCalls = (DateTime.UtcNow - this.samples[0].Timestamp).Ticks;
+                int sumOfBytesFromCalls = this.samples.Sum(s => s.Count);
+                long ticksBetweenCalls = (DateTime.UtcNow - this.samples[0].Timestamp).Ticks;
 
                 return (int)((double)sumOfBytesFromCalls / ticksBetweenCalls * 10000 * 1000);
             }
@@ -39,19 +41,19 @@ namespace Toqe.Downloader.Business.Observer
 
         protected override void OnAttach(IDownload download)
         {
-            download.DataReceived += downloadDataReceived;
+            download.DataReceived += this.downloadDataReceived;
         }
 
         protected override void OnDetach(IDownload download)
         {
-            download.DataReceived -= downloadDataReceived;
+            download.DataReceived -= this.downloadDataReceived;
         }
 
         private void AddSample(int count)
         {
             lock (this.monitor)
             {
-                var sample = new DownloadDataSample()
+                DownloadDataSample sample = new DownloadDataSample()
                 {
                     Count = count,
                     Timestamp = DateTime.UtcNow
@@ -68,7 +70,7 @@ namespace Toqe.Downloader.Business.Observer
 
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
-            AddSample(args.Count);
+            this.AddSample(args.Count);
         }
     }
 }

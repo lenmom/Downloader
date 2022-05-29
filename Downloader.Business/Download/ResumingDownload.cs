@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
 using System.Threading;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Contract.Enums;
 using Toqe.Downloader.Business.Contract.Events;
@@ -37,13 +34,19 @@ namespace Toqe.Downloader.Business.Download
             : base(url, bufferSize, offset, maxReadBytes, null, null)
         {
             if (timeForHeartbeat <= 0)
+            {
                 throw new ArgumentException("timeForHeartbeat <= 0");
+            }
 
             if (timeToRetry <= 0)
+            {
                 throw new ArgumentException("timeToRetry <= 0");
+            }
 
             if (downloadBuilder == null)
+            {
                 throw new ArgumentException("downloadBuilder");
+            }
 
             this.timeForHeartbeat = timeForHeartbeat;
             this.timeToRetry = timeToRetry;
@@ -53,8 +56,8 @@ namespace Toqe.Downloader.Business.Download
 
         protected override void OnStart()
         {
-            StartThread(this.StartDownload, string.Format("ResumingDownload offset {0} length {1} Main", this.offset, this.maxReadBytes));
-            StartThread(this.CheckHeartbeat, string.Format("ResumingDownload offset {0} length {1} Heartbeat", this.offset, this.maxReadBytes));
+            this.StartThread(this.StartDownload, string.Format("ResumingDownload offset {0} length {1} Main", this.offset, this.maxReadBytes));
+            this.StartThread(this.CheckHeartbeat, string.Format("ResumingDownload offset {0} length {1} Heartbeat", this.offset, this.maxReadBytes));
         }
 
         protected override void OnStop()
@@ -70,14 +73,14 @@ namespace Toqe.Downloader.Business.Download
         {
             lock (this.monitor)
             {
-                StartNewDownload();
+                this.StartNewDownload();
             }
         }
 
         private void StartNewDownload()
         {
             this.currentOffset = this.offset.HasValue ? this.offset.Value : 0;
-            BuildDownload();
+            this.BuildDownload();
         }
 
         private void CheckHeartbeat()
@@ -95,12 +98,12 @@ namespace Toqe.Downloader.Business.Download
 
                     if (DateTime.Now - this.lastHeartbeat > TimeSpan.FromMilliseconds(this.timeForHeartbeat))
                     {
-                        CountRetryAndCancelIfMaxRetriesReached();
+                        this.CountRetryAndCancelIfMaxRetriesReached();
 
                         if (this.currentDownload != null)
                         {
                             this.CloseDownload();
-                            StartThread(this.BuildDownload, Thread.CurrentThread.Name + "-byHeartbeat");
+                            this.StartThread(this.BuildDownload, Thread.CurrentThread.Name + "-byHeartbeat");
                         }
                     }
                 }
@@ -131,11 +134,11 @@ namespace Toqe.Downloader.Business.Download
                 long? currentMaxReadBytes = this.maxReadBytes.HasValue ? (long?)this.maxReadBytes.Value - this.sumOfBytesRead : null;
 
                 this.currentDownload = this.downloadBuilder.Build(this.url, this.bufferSize, this.currentOffset, currentMaxReadBytes);
-                this.currentDownload.DownloadStarted += downloadStarted;
-                this.currentDownload.DownloadCancelled += downloadCancelled;
-                this.currentDownload.DownloadCompleted += downloadCompleted;
-                this.currentDownload.DataReceived += downloadDataReceived;
-                StartThread(this.currentDownload.Start, Thread.CurrentThread.Name + "-buildDownload");
+                this.currentDownload.DownloadStarted += this.downloadStarted;
+                this.currentDownload.DownloadCancelled += this.downloadCancelled;
+                this.currentDownload.DownloadCompleted += this.downloadCompleted;
+                this.currentDownload.DataReceived += this.downloadDataReceived;
+                this.StartThread(this.currentDownload.Start, Thread.CurrentThread.Name + "-buildDownload");
             }
         }
 
@@ -157,7 +160,7 @@ namespace Toqe.Downloader.Business.Download
         private void SleepThenBuildDownload()
         {
             Thread.Sleep(this.timeToRetry);
-            BuildDownload();
+            this.BuildDownload();
         }
 
         private void CloseDownload()
@@ -172,9 +175,9 @@ namespace Toqe.Downloader.Business.Download
 
         private void downloadDataReceived(DownloadDataReceivedEventArgs args)
         {
-            var download = args.Download;
-            var count = args.Count;
-            var data = args.Data;
+            IDownload download = args.Download;
+            int count = args.Count;
+            byte[] data = args.Data;
             long previousOffset = 0;
 
             lock (this.monitor)
@@ -199,7 +202,7 @@ namespace Toqe.Downloader.Business.Download
 
         private void downloadStarted(DownloadStartedEventArgs args)
         {
-            var download = args.Download;
+            IDownload download = args.Download;
             bool shouldNotifyDownloadStarted = false;
 
             lock (this.monitor)
@@ -234,18 +237,18 @@ namespace Toqe.Downloader.Business.Download
 
         private void downloadCancelled(DownloadCancelledEventArgs args)
         {
-            var download = args.Download;
+            IDownload download = args.Download;
 
             lock (this.monitor)
             {
                 if (download == this.currentDownload)
                 {
-                    CountRetryAndCancelIfMaxRetriesReached();
+                    this.CountRetryAndCancelIfMaxRetriesReached();
 
                     if (this.currentDownload != null)
                     {
                         this.currentDownload = null;
-                        StartThread(this.SleepThenBuildDownload, Thread.CurrentThread.Name + "-afterCancel");
+                        this.StartThread(this.SleepThenBuildDownload, Thread.CurrentThread.Name + "-afterCancel");
                     }
                 }
             }

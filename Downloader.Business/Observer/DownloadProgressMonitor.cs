@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Contract.Events;
 
@@ -17,12 +15,12 @@ namespace Toqe.Downloader.Business.Observer
         {
             lock (this.monitor)
             {
-                if (!downloadSizes.ContainsKey(download) || !alreadyDownloadedSizes.ContainsKey(download) || downloadSizes[download] <= 0)
+                if (!this.downloadSizes.ContainsKey(download) || !this.alreadyDownloadedSizes.ContainsKey(download) || this.downloadSizes[download] <= 0)
                 {
                     return 0;
                 }
 
-                return (float)alreadyDownloadedSizes[download] / downloadSizes[download];
+                return (float)this.alreadyDownloadedSizes[download] / this.downloadSizes[download];
             }
         }
 
@@ -30,12 +28,12 @@ namespace Toqe.Downloader.Business.Observer
         {
             lock (this.monitor)
             {
-                if (!alreadyDownloadedSizes.ContainsKey(download))
+                if (!this.alreadyDownloadedSizes.ContainsKey(download))
                 {
                     return 0;
                 }
 
-                return alreadyDownloadedSizes[download];
+                return this.alreadyDownloadedSizes[download];
             }
         }
 
@@ -43,27 +41,27 @@ namespace Toqe.Downloader.Business.Observer
         {
             lock (this.monitor)
             {
-                if (!downloadSizes.ContainsKey(download) || downloadSizes[download] <= 0)
+                if (!this.downloadSizes.ContainsKey(download) || this.downloadSizes[download] <= 0)
                 {
                     return 0;
                 }
 
-                return downloadSizes[download];
+                return this.downloadSizes[download];
             }
         }
 
         protected override void OnAttach(IDownload download)
         {
-            download.DownloadStarted += OnDownloadStarted;
-            download.DataReceived += OnDownloadDataReceived;
-            download.DownloadCompleted += OnDownloadCompleted;
+            download.DownloadStarted += this.OnDownloadStarted;
+            download.DataReceived += this.OnDownloadDataReceived;
+            download.DownloadCompleted += this.OnDownloadCompleted;
         }
 
         protected override void OnDetach(IDownload download)
         {
-            download.DownloadStarted -= OnDownloadStarted;
-            download.DataReceived -= OnDownloadDataReceived;
-            download.DownloadCompleted -= OnDownloadCompleted;
+            download.DownloadStarted -= this.OnDownloadStarted;
+            download.DataReceived -= this.OnDownloadDataReceived;
+            download.DownloadCompleted -= this.OnDownloadCompleted;
 
             lock (this.monitor)
             {
@@ -92,7 +90,7 @@ namespace Toqe.Downloader.Business.Observer
         {
             lock (this.monitor)
             {
-                if (!alreadyDownloadedSizes.ContainsKey(args.Download))
+                if (!this.alreadyDownloadedSizes.ContainsKey(args.Download))
                 {
                     this.alreadyDownloadedSizes[args.Download] = 0;
                 }

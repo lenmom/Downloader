@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+
 using Toqe.Downloader.Business.Contract;
 
 namespace Toqe.Downloader.Business.Utils
@@ -14,10 +13,10 @@ namespace Toqe.Downloader.Business.Utils
 
         public List<DownloadRange> RangeDifference(DownloadRange fullRange, DownloadRange range)
         {
-            var result = new List<DownloadRange>();
+            List<DownloadRange> result = new List<DownloadRange>();
 
             // no intersection
-            if (!RangesCollide(fullRange, range))
+            if (!this.RangesCollide(fullRange, range))
             {
                 result.Add(fullRange);
                 return result;

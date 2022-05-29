@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 
 namespace Toqe.Downloader.Business.Observer
@@ -15,7 +14,9 @@ namespace Toqe.Downloader.Business.Observer
         public void Attach(IDownload download)
         {
             if (download == null)
+            {
                 throw new ArgumentNullException("download");
+            }
 
             lock (this.monitor)
             {
@@ -44,7 +45,7 @@ namespace Toqe.Downloader.Business.Observer
                 downloadsCopy = new List<IDownload>(this.attachedDownloads);
             }
 
-            foreach (var download in downloadsCopy)
+            foreach (IDownload download in downloadsCopy)
             {
                 this.Detach(download);
             }

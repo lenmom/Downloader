@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract.Events;
 using Toqe.Downloader.Business.DownloadBuilder;
-using Xunit;
 
 namespace Downloader.Test
 {
@@ -19,17 +17,17 @@ namespace Downloader.Test
         [Fact]
         public void TestMultiPartDownloadListsDuringDownload()
         {
-            var dlBuilder = new TestDownloadBuilder();
-            var requestBuilder = new TestWebRequestBuilder();
-            var dlChecker = new TestDownloadChecker();
-            var mpdlBuilder = new MultiPartDownloadBuilder(numberOfParts, dlBuilder, requestBuilder, dlChecker, null);
-            var dl = mpdlBuilder.Build(url, bufferSize, null, null);
+            TestDownloadBuilder dlBuilder = new TestDownloadBuilder();
+            TestWebRequestBuilder requestBuilder = new TestWebRequestBuilder();
+            TestDownloadChecker dlChecker = new TestDownloadChecker();
+            MultiPartDownloadBuilder mpdlBuilder = new MultiPartDownloadBuilder(numberOfParts, dlBuilder, requestBuilder, dlChecker, null);
+            Toqe.Downloader.Business.Contract.IDownload dl = mpdlBuilder.Build(url, bufferSize, null, null);
 
-            var dataReceivedList = new List<DownloadDataReceivedEventArgs>();
-            var downloadStartedList = new List<DownloadStartedEventArgs>();
-            var downloadCompletedList = new List<DownloadEventArgs>();
-            var downloadStoppedList = new List<DownloadEventArgs>();
-            var downloadCancelledList = new List<DownloadCancelledEventArgs>();
+            List<DownloadDataReceivedEventArgs> dataReceivedList = new List<DownloadDataReceivedEventArgs>();
+            List<DownloadStartedEventArgs> downloadStartedList = new List<DownloadStartedEventArgs>();
+            List<DownloadEventArgs> downloadCompletedList = new List<DownloadEventArgs>();
+            List<DownloadEventArgs> downloadStoppedList = new List<DownloadEventArgs>();
+            List<DownloadCancelledEventArgs> downloadCancelledList = new List<DownloadCancelledEventArgs>();
 
             // TODO: Register events and add args to list, if handler is called
 

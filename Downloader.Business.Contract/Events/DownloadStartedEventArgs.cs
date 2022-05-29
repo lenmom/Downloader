@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Toqe.Downloader.Business.Contract.Events
+﻿namespace Toqe.Downloader.Business.Contract.Events
 {
     public class DownloadStartedEventArgs : DownloadEventArgs
     {
@@ -18,8 +13,14 @@ namespace Toqe.Downloader.Business.Contract.Events
             this.AlreadyDownloadedSize = alreadyDownloadedSize;
         }
 
-        public DownloadCheckResult CheckResult { get; set; }
+        public DownloadCheckResult CheckResult
+        {
+            get; set;
+        }
 
-        public long AlreadyDownloadedSize { get; set; }
+        public long AlreadyDownloadedSize
+        {
+            get; set;
+        }
     }
 }

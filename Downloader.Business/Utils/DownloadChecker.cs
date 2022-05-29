@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 
 namespace Toqe.Downloader.Business.Utils
@@ -10,8 +9,8 @@ namespace Toqe.Downloader.Business.Utils
     {
         public DownloadCheckResult CheckDownload(WebResponse response)
         {
-            var result = new DownloadCheckResult();
-            var acceptRanges = response.Headers["Accept-Ranges"];
+            DownloadCheckResult result = new DownloadCheckResult();
+            string acceptRanges = response.Headers["Accept-Ranges"];
             result.SupportsResume = !string.IsNullOrEmpty(acceptRanges) && acceptRanges.ToLower().Contains("bytes");
             result.Size = response.ContentLength;
             result.StatusCode = (int?)(response as HttpWebResponse)?.StatusCode;
@@ -23,11 +22,11 @@ namespace Toqe.Downloader.Business.Utils
         {
             try
             {
-                var request = requestBuilder.CreateRequest(url, null);
+                HttpWebRequest request = requestBuilder.CreateRequest(url, null);
 
-                using (var response = request.GetResponse())
+                using (WebResponse response = request.GetResponse())
                 {
-                    return CheckDownload(response);
+                    return this.CheckDownload(response);
                 }
             }
             catch (WebException ex)

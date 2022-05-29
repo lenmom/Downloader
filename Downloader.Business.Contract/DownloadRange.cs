@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Toqe.Downloader.Business.Contract
+﻿namespace Toqe.Downloader.Business.Contract
 {
     public class DownloadRange
     {
@@ -16,16 +12,25 @@ namespace Toqe.Downloader.Business.Contract
             this.Length = length;
         }
 
-        public long Start { get; set; }
+        public long Start
+        {
+            get; set;
+        }
 
-        public long Length { get; set; }
+        public long Length
+        {
+            get; set;
+        }
 
         public long End
         {
-            get { return this.Start + this.Length - 1; }
+            get
+            {
+                return this.Start + this.Length - 1;
+            }
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             if (obj == null)
             {
@@ -34,12 +39,12 @@ namespace Toqe.Downloader.Business.Contract
 
             DownloadRange r = obj as DownloadRange;
 
-            return Equals(r);
+            return this.Equals(r);
         }
 
         public bool Equals(DownloadRange r)
         {
-            if ((Object)r == null)
+            if ((object)r == null)
             {
                 return false;
             }

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract.Enums;
 using Toqe.Downloader.Business.Contract.Events;
 
@@ -18,7 +17,10 @@ namespace Toqe.Downloader.Business.Contract
 
         event DownloadDelegates.DownloadCancelledHandler DownloadCancelled;
 
-        DownloadState State { get; }
+        DownloadState State
+        {
+            get;
+        }
 
         void Start();
 

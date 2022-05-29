@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Contract.Enums;
 using Toqe.Downloader.Business.Contract.Events;
@@ -20,15 +18,15 @@ namespace Toqe.Downloader.Business.Download
         {
             try
             {
-                var request = this.requestBuilder.CreateRequest(this.url, this.offset);
+                HttpWebRequest request = this.requestBuilder.CreateRequest(this.url, this.offset);
 
-                using (var response = request.GetResponse())
+                using (WebResponse response = request.GetResponse())
                 {
-                    var httpResponse = response as HttpWebResponse;
+                    HttpWebResponse httpResponse = response as HttpWebResponse;
 
                     if (httpResponse != null)
                     {
-                        var statusCode = httpResponse.StatusCode;
+                        HttpStatusCode statusCode = httpResponse.StatusCode;
 
                         if (!(statusCode == HttpStatusCode.OK || (this.offset.HasValue && statusCode == HttpStatusCode.PartialContent)))
                         {
@@ -36,14 +34,14 @@ namespace Toqe.Downloader.Business.Download
                         }
                     }
 
-                    var checkResult = this.downloadChecker.CheckDownload(response);
-                    var supportsResume = checkResult.SupportsResume;
+                    DownloadCheckResult checkResult = this.downloadChecker.CheckDownload(response);
+                    bool supportsResume = checkResult.SupportsResume;
                     long currentOffset = supportsResume && this.offset.HasValue ? this.offset.Value : 0;
                     long sumOfBytesRead = 0;
 
                     this.OnDownloadStarted(new DownloadStartedEventArgs(this, checkResult, currentOffset));
 
-                    using (var stream = response.GetResponseStream())
+                    using (System.IO.Stream stream = response.GetResponseStream())
                     {
                         byte[] buffer = new byte[this.bufferSize];
 
@@ -71,12 +69,12 @@ namespace Toqe.Downloader.Business.Download
                                 break;
                             }
 
-                            if (maxReadBytes.HasValue && sumOfBytesRead + bytesRead > maxReadBytes.Value)
+                            if (this.maxReadBytes.HasValue && sumOfBytesRead + bytesRead > this.maxReadBytes.Value)
                             {
-                                var count = (int)(maxReadBytes.Value - sumOfBytesRead);
+                                int count = (int)(this.maxReadBytes.Value - sumOfBytesRead);
 
                                 if (count > 0)
-                                {         
+                                {
                                     this.OnDataReceived(new DownloadDataReceivedEventArgs(this, buffer, currentOffset, count));
                                 }
                             }

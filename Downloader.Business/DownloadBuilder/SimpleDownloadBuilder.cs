@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Download;
 
@@ -16,10 +14,14 @@ namespace Toqe.Downloader.Business.DownloadBuilder
         public SimpleDownloadBuilder(IWebRequestBuilder requestBuilder, IDownloadChecker downloadChecker)
         {
             if (requestBuilder == null)
+            {
                 throw new ArgumentNullException("requestBuilder");
+            }
 
             if (downloadChecker == null)
+            {
                 throw new ArgumentNullException("downloadChecker");
+            }
 
             this.requestBuilder = requestBuilder;
             this.downloadChecker = downloadChecker;

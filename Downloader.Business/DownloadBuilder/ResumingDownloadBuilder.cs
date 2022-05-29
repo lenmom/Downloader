@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+
 using Toqe.Downloader.Business.Contract;
 using Toqe.Downloader.Business.Download;
 
@@ -21,13 +18,19 @@ namespace Toqe.Downloader.Business.DownloadBuilder
         public ResumingDownloadBuilder(int timeForHeartbeat, int timeToRetry, int? maxRetries, IDownloadBuilder downloadBuilder)
         {
             if (timeForHeartbeat <= 0)
+            {
                 throw new ArgumentException("timeForHeartbeat <= 0");
+            }
 
             if (timeToRetry <= 0)
+            {
                 throw new ArgumentException("timeToRetry <= 0");
+            }
 
             if (downloadBuilder == null)
+            {
                 throw new ArgumentNullException("downloadBuilder");
+            }
 
             this.timeForHeartbeat = timeForHeartbeat;
             this.timeToRetry = timeToRetry;
